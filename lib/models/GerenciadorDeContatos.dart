@@ -1,19 +1,25 @@
-import 'Contato.dart';
+import 'package:agenda/models/Contato.dart';
+import 'package:agenda/models/DatabaseHelper.dart';
 
 class GerenciadorDeContatos {
-  final List<Contato> _contatos = [];
 
-  List<Contato> get contatos => List.unmodifiable(_contatos);
-
-  void adicionarContato(Contato contato) {
-    _contatos.add(contato);
+  Future<void> adicionarContato(Contato contato) async {
+   final db=DatabaseService.instance;
+   db.novoContato(contato: contato);
   }
 
-  void atualizarContato(int indice, Contato contatoAtualizado) {
-    _contatos[indice] = contatoAtualizado;
+  Future<List<Contato>> obterContatos() async {
+    final db=DatabaseService.instance;
+    return await db.recuperaContatos();
   }
 
-  void deletarContato(int indice) {
-    _contatos.removeAt(indice);
+  Future<void> atualizarContato(Contato contato) async {
+    final db=DatabaseService.instance;
+    await db.updateContato(contato);
+  }
+
+  Future<void> deletarContato(int id) async {
+    final db=DatabaseService.instance;
+    await db.deleteContato(id);
   }
 }

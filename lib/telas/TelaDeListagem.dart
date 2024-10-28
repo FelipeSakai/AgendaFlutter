@@ -11,16 +11,23 @@ class TelaDeListagem extends StatefulWidget {
 
 class _TelaDeListagemState extends State<TelaDeListagem> {
   final GerenciadorDeContatos _gerenciadorDeContatos = GerenciadorDeContatos();
+  List<Contato> _contatos = [];
 
   @override
   void initState() {
     super.initState();
-    _gerenciadorDeContatos.adicionarContato(Contato(nome: 'Felipe Sakai', telefone: '(67) 99800-1788', email: 'felipesakai@gmail.com'));
-    _gerenciadorDeContatos.adicionarContato(Contato(nome: 'Andre Prof', telefone: '(67) 99732-1234', email: 'andrereidojava@gmail.com'));
+    _carregarContatos();
+  }
+
+  Future<void> _carregarContatos() async {
+    final contatos = await _gerenciadorDeContatos.obterContatos();
+    setState(() {
+      _contatos = contatos;
+    });
   }
 
   void _atualizarTela() {
-    setState(() {});
+    _carregarContatos();
   }
 
   @override
@@ -32,7 +39,7 @@ class _TelaDeListagemState extends State<TelaDeListagem> {
       body: Container(
         color: Colors.grey[800],
         child: ListView.builder(
-          itemCount: _gerenciadorDeContatos.contatos.length + 1, 
+          itemCount: _contatos.length + 1,
           itemBuilder: (context, indice) {
             if (indice == 0) {
               return ListTile(
@@ -54,7 +61,7 @@ class _TelaDeListagemState extends State<TelaDeListagem> {
                 },
               );
             } else {
-              final contato = _gerenciadorDeContatos.contatos[indice - 1];
+              final contato = _contatos[indice - 1];
               return ListTile(
                 title: Text(contato.nome, style: TextStyle(color: Colors.white)),
                 subtitle: Column(
@@ -73,7 +80,7 @@ class _TelaDeListagemState extends State<TelaDeListagem> {
                         builder: (context) => TelaDeEdicao(
                           contato: contato,
                           gerenciadorDeContatos: _gerenciadorDeContatos,
-                          indiceDoContato: indice - 1,
+                          indiceDoContato: contato.id!,
                           aoAtualizarContato: _atualizarTela,
                         ),
                       ),

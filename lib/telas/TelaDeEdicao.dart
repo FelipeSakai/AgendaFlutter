@@ -38,8 +38,8 @@ class _TelaDeEdicaoState extends State<TelaDeEdicao> {
   void _salvarContato() {
     if (_formKey.currentState!.validate()) {
       widget.gerenciadorDeContatos.atualizarContato(
-        widget.indiceDoContato,
         Contato(
+          id: widget.indiceDoContato,
           nome: _nomeController.text,
           telefone: _telefoneController.text,
           email: _emailController.text,

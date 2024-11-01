@@ -2,7 +2,9 @@ import 'package:agenda/models/DatabaseHelper.dart';
 import 'package:agenda/models/UsuarioModel.dart';
 import 'package:agenda/telas/TelaDeCadastro.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 import 'TelaDeListagem.dart';
 
 class TelaDeLogin extends StatefulWidget {
@@ -22,8 +24,8 @@ class _TelaDeLoginState extends State<TelaDeLogin> {
   }
 
   Future<void> verificarLogin() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? token = prefs.getString('token');
+    final storage = FlutterSecureStorage();
+    final String? token = await storage.read(key: 'token');
     if (token != null && token.isNotEmpty) {
       Navigator.pushReplacement(
         context,
@@ -42,8 +44,10 @@ class _TelaDeLoginState extends State<TelaDeLogin> {
       final autenticado = await DatabaseService.instance.verificarLogin(
           usuarioModel: UsuarioModel(usuario: usuario, senha: senha));
       if (autenticado) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', usuario);
+        final Uuid uuid = Uuid();
+
+          final storage = FlutterSecureStorage();
+          await storage.write(key: 'token', value: uuid.v4());
 
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => TelaDeListagem()));

@@ -2,7 +2,10 @@ import 'package:agenda/models/Contato.dart';
 import 'package:agenda/models/GerenciadorDeContatos.dart';
 import 'package:agenda/telas/TelaDeCriacao.dart';
 import 'package:agenda/telas/TelaDeEdicao.dart';
+import 'package:agenda/telas/TelaDeLogin.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TelaDeListagem extends StatefulWidget {
   @override
@@ -30,10 +33,28 @@ class _TelaDeListagemState extends State<TelaDeListagem> {
     _carregarContatos();
   }
 
+  Future<void> _deslogar(BuildContext context) async {
+    final FlutterSecureStorage storage = FlutterSecureStorage();
+    await storage.delete(key: 'token'); 
+    
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => TelaDeLogin()),
+      (Route<dynamic> route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () => _deslogar(context),
+            tooltip: 'Deslogar',
+          ),
+        ],
         title: Text('Lista de Contatos'),
       ),
       body: Container(
@@ -63,12 +84,15 @@ class _TelaDeListagemState extends State<TelaDeListagem> {
             } else {
               final contato = _contatos[indice - 1];
               return ListTile(
-                title: Text(contato.nome, style: TextStyle(color: Colors.white)),
+                title:
+                    Text(contato.nome, style: TextStyle(color: Colors.white)),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Telefone: ${contato.telefone}', style: TextStyle(color: Colors.grey[400])),
-                    Text('Email: ${contato.email}', style: TextStyle(color: Colors.grey[400])),
+                    Text('Telefone: ${contato.telefone}',
+                        style: TextStyle(color: Colors.grey[400])),
+                    Text('Email: ${contato.email}',
+                        style: TextStyle(color: Colors.grey[400])),
                   ],
                 ),
                 trailing: IconButton(

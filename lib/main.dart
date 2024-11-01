@@ -1,4 +1,6 @@
+import 'package:agenda/telas/TelaDeLogin.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'telas/TelaDeListagem.dart';
 
 void main() {
@@ -6,7 +8,10 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  Future<bool> _verificarToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token') != null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +31,7 @@ class MyApp extends StatelessWidget {
           onSurface: Colors.white,
         ),
       ),
-      home: TelaDeListagem(),
+      home: TelaDeLogin(),
     );
   }
 }

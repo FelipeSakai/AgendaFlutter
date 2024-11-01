@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:agenda/models/Contato.dart';
+import 'package:agenda/models/UsuarioModel.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -109,4 +110,31 @@ class DatabaseService {
 
     await db.delete(nomeDaTabela, where: 'id = ?', whereArgs: [id]);
   }
+Future<void> novoUsuario({required UsuarioModel contato}) async {
+    final db = await database;
+    print(db);
+
+    db.insert(
+      nomeDaTabelaUsuario,
+      {
+        "usuario": contato.usuario,
+        "senha": contato.senha,
+      },
+    );
+  }
+
+  Future<bool> verificarLogin({required UsuarioModel usuarioModel}) async {
+    final db = await database;
+
+    final resultado = await db.query(
+      nomeDaTabelaUsuario,
+      where: 'usuario = ? AND senha = ?',
+      whereArgs: [usuarioModel.usuario, usuarioModel.senha],
+    );
+    return resultado.isNotEmpty;
+  }
+
+
+
+
 }
